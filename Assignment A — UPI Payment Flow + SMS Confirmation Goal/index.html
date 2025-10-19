@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UPI Deep Link Payment Demo</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      width: 350px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #222;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0078ff;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      margin-top: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .info {
+      color: #555;
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>UPI Payment Demo</h2>
+
+    <label for="vpa">UPI ID</label>
+    <input id="vpa" value="9390545520@ybl" />
+
+    <label for="name">Merchant Name</label>
+    <input id="name" value="Abhiram Bhuvanagiri" />
+
+    <label for="amount">Amount (₹)</label>
+    <input id="amount" type="number" value="1" />
+
+    <button id="payBtn">Pay via UPI</button>
+    <button id="copyBtn" style="background-color:#444;">Copy Payment Link</button>
+
+    <p class="info" id="status">Status: Not Paid</p>
+  </div>
+
+  <script>
+    const payBtn = document.getElementById("payBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const status = document.getElementById("status");
+
+    // Function to create UPI deep link
+    function createUpiLink(pa, pn, am, tn = "Test Transaction") {
+      const params = new URLSearchParams({
+        pa, pn, am, tn, cu: "INR"
+      });
+      return `upi://pay?${params.toString()}`;
+    }
+
+    // Handle payment button click
+    payBtn.addEventListener("click", () => {
+      const pa = document.getElementById("vpa").value.trim();
+      const pn = document.getElementById("name").value.trim();
+      const am = document.getElementById("amount").value.trim();
+
+      if (!pa || !pn || !am) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      const upiLink = createUpiLink(pa, pn, am);
+      status.textContent = "Opening UPI app...";
+
+      // Try to open UPI app directly
+      window.location.href = upiLink;
+    });
+
+    // Copy UPI link for manual payment
+    copyBtn.addEventListener("click", () => {
+      const pa = document.getElementById("vpa").value.trim();
+      const pn = document.getElementById("name").value.trim();
+      const am = document.getElementById("amount").value.trim();
+      const upiLink = createUpiLink(pa, pn, am);
+
+      navigator.clipboard.writeText(upiLink).then(() => {
+        alert("UPI payment link copied!");
+      });
+    });
+  </script>
+
+</body>
+</html>
